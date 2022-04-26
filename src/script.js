@@ -1,6 +1,19 @@
 import { spline } from "@georgedoescode/spline";
 import { SVG } from "@svgdotjs/svg.js";
 
+
+// choose a whole number within a range
+function random (min, max, float = false) {
+    const val = Math.random() * (max - min) + min
+
+    if (float) {
+        return val
+    }
+
+    return Math.floor(val)
+}
+
+
 class BlobChar {
     constructor(width, height, target) {
         // viewbox dimensions
@@ -18,27 +31,27 @@ class BlobChar {
 
         // random size of our char
         this.size = random(50, 80)
+    }
 
-        // drawing body of char
-        drawBody() {
-            // random no of points
-            const numPoints = random( 3, 12)
-            // step used to place each point at equal distance
-            const angleStep = (Math.PI * 2) / numPoints
+    // drawing body of char
+    drawBody() {
+        // random no of points
+        const numPoints = random( 3, 12)
+        // step used to place each point at equal distance
+        const angleStep = (Math.PI * 2) / numPoints
 
-            // track points
-            const points = []
+        // track points
+        const points = []
 
-            // how much randomness should be added to each point
-            for (let i = 1; i <= numPoints; i++) {
-                const pull = random(0.75, 1, true)
+        // how much randomness should be added to each point
+        for (let i = 1; i <= numPoints; i++) {
+            const pull = random(0.75, 1, true)
 
-                // x & y coordinates of the current point
-                const x = this.x + Math.cos(i * angleStep) * (this.size * pull)
-                const y = this.y + Math.sin(i * angleStep) * (this.size * pull)
+            // x & y coordinates of the current point
+            const x = this.x + Math.cos(i * angleStep) * (this.size * pull)
+            const y = this.y + Math.sin(i * angleStep) * (this.size * pull)
                 
-                points.push({ x, y })
-            }
+            points.push({ x, y })
         }
 
         // generate smooth conntinuous curve based on  points, using bezier curves. spline() will return an svg path-data string
@@ -50,18 +63,35 @@ class BlobChar {
             .stroke({ color: '#000', width: 2 })
             .fill('transparent')
     }
-}
 
+    // draw eye
+    // x position, y position, radius / size
+    drawEye(x, y, size) {
+    // create a new svg <group /> to add all the eye content to
+    const eye = this.svg.group();
+    // <group /> elements do not have an x and y attribute, so we need to "transform" it to the right position
+    eye.transform({ translateX: x, translateY: y });
+  
+    // add the outer ring of the eye (an svg <circle /> element) to our eye <group />
+    eye
+      .circle(size)
+      // cx / cy are the { x, y } values for the svg <circle /> element
+      .cx(0)
+      .cy(0)
+      .stroke({
+        width: 2,
+        color: '#000'
+      })
+      .fill('#fff');
+  
+    // add the inner part of the eye (another svg <circle /> element) to our eye <group />
+    eye
+      .circle(size / 2)
+      .cx(0)
+      .cy(0)
+      .fill('#000')
+  }
 
-// choose a whole number within a range
-function random (min, max, float = false) {
-    const val = Math.random() * (max - min) + min
-
-    if (float) {
-        return val
-    }
-
-    return Math.floor(val)
 }
 
 
